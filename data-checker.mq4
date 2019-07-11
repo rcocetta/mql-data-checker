@@ -34,8 +34,8 @@ bool hasPeriodChanged() {
 }
 
 int CheckMissingDay(){
-   int diff = MathAbs(DayOfWeek() - lastCheckedDayOfWeek );   
-   diff = Day() - lastCheckedDay;
+      
+   int diff = Day() - lastCheckedDay;
    if ((diff > 1) && (lastCheckedDayOfWeek != FRIDAY))
       return diff;
       
