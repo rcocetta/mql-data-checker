@@ -9,8 +9,15 @@ int periodsNum         = 0;
 int problematicPeriods = 0;
 int lastCheckedPeriod  = NULL;
 
+int lastCheckedDayOfWeek;
+int lastCheckedDay;
+int lastCheckedHour;
+
 void OnInit() {
    Print("Data checker started");
+   lastCheckedDayOfWeek = DayOfWeek();
+   lastCheckedHour = Hour();
+   lastCheckedDay = 0;
 }
 
 bool hasPeriodChanged() {
@@ -26,7 +33,20 @@ bool hasPeriodChanged() {
    return false;
 }
 
+int CheckMissingDay(){
+   int diff = MathAbs(DayOfWeek() - lastCheckedDayOfWeek );   
+   diff = Day() - lastCheckedDay;
+   if ((diff > 1) && (lastCheckedDayOfWeek != FRIDAY))
+      return diff;
+      
+   if (diff > 2) return diff;
+
+   return 0;
+} 
+
+
 void OnTick() {
+   int dayDiff;
    if (!hasPeriodChanged()) {
       ticksPerPeriod++;
    } else {
@@ -36,6 +56,14 @@ void OnTick() {
          problematicPeriods++;
          ticksPerPeriod = 0;
       }
+      PrintFormat("%d-%d", lastCheckedDay, Day());
+      dayDiff = CheckMissingDay();
+      if (dayDiff  > 0) {
+         PrintFormat("Missing %d Days before %d-%d-%d ", dayDiff, Year(), Month(), Day());
+         problematicPeriods+=dayDiff;
+      }
+      lastCheckedDayOfWeek = DayOfWeek();
+      lastCheckedDay = Day();
    }
 }
 
